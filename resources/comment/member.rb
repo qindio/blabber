@@ -26,6 +26,11 @@ module Blabber
         self
       end
 
+      def validate!
+        validate
+        raise InvalidResource unless valid?
+      end
+
       def valid?
         self.errors.values.flatten.empty?
       end
@@ -43,8 +48,7 @@ module Blabber
       end
 
       def sync
-        validate
-        raise InvalidResource unless valid?
+        validate!
         Comment.repository.store(id, self.to_json)
         self
       end

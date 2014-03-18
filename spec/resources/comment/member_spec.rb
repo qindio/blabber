@@ -47,6 +47,13 @@ describe Comment::Member do
     end
   end
 
+  describe '#validate!' do
+    it 'raises InvalidResource if resource invalid' do
+      lambda { Comment::Member.new.validate! }.must_raise InvalidResource
+      comment = Comment::Member.new(name: 'foo', text: 'bar').validate!
+    end
+  end
+
   describe '#valid?' do
     it 'returns false if any attribute has any errors' do
       comment = Comment::Member.new.validate
