@@ -44,7 +44,7 @@ module Blabber
       end
 
       def fetch
-        set_attributes(Comment.repository.fetch(id))
+        set_attributes(JSON.parse(Comment.repository.fetch(id)))
       end
 
       def sync
@@ -63,7 +63,7 @@ module Blabber
 
       def set_attributes(attributes={})
         attributes
-          .select { |key, value| ATTRIBUTES.include?(key) }
+          .select { |key, value| ATTRIBUTES.include?(key.to_sym) }
           .each { |key, value| self.send("#{key}=", value) }
       end
     end # Member

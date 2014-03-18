@@ -94,7 +94,7 @@ describe Comment::Member do
     it 'retrieves attributes from the repository' do
       fake_repository = Object.new
       def fake_repository.fetch(*args)
-        { name: 'name 1', text: 'text 1' }
+        { name: 'name 1', text: 'text 1' }.to_json
       end
 
       Comment.repository = fake_repository
