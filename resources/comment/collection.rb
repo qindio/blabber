@@ -42,11 +42,13 @@ module Blabber
 
       def sync
         Comment.repository.apply(id, operations)
+        self
       end
 
       def fetch
         self.members = Comment.repository.fetch(id)
           .map { |attributes| member_klass.new(attributes) }
+        self
       end
 
       def each(&block)
