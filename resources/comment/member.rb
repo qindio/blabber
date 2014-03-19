@@ -9,7 +9,7 @@ module Blabber
 
   module Comment
     class Member
-      ATTRIBUTES = [:id, :name, :text, :created_at, :url]
+      ATTRIBUTES = [:id, :url, :name, :text, :created_at]
 
       attr_reader :errors, :id, :url, :name, :text, :created_at
 
