@@ -1,7 +1,6 @@
 # encoding: utf-8
 require 'minitest/autorun'
 require 'securerandom'
-require 'json'
 
 require_relative '../../repository/memory'
 
@@ -16,8 +15,8 @@ describe Repository::Memory do
       lambda { repository.fetch("test") }.must_raise KeyError
 
       repository = Repository::Memory.new
-      repository.store("test", member.to_json)
-      repository.fetch("test").must_equal member.to_json
+      repository.store("test", member)
+      repository.fetch("test").must_equal member
     end
   end
 
@@ -25,9 +24,9 @@ describe Repository::Memory do
     it 'returns member data for a member id' do
       member = fixture_member
       repository = Repository::Memory.new
-      repository.store("test", member.to_json)
+      repository.store("test", member)
 
-      repository.fetch("test").must_equal(member.to_json)
+      repository.fetch("test").must_equal(member)
     end
 
     it 'raises KeyError if member cannot be found' do
@@ -41,7 +40,7 @@ describe Repository::Memory do
       member = fixture_member
       repository = Repository::Memory.new
 
-      repository.store("test", member.to_json)
+      repository.store("test", member)
       repository.fetch("test").wont_be_nil
 
       repository.delete("test")
