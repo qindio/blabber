@@ -113,6 +113,17 @@ describe Comment::Collection do
     end
   end
 
+  describe '#to_json' do
+    it 'returns a JSON representation of the collection' do
+      collection = Comment::Collection.new('test')
+      collection.add(new_comment)
+      collection.add(new_comment)
+
+      collection.to_a.first
+      JSON.parse(collection.to_json).length.must_equal 2
+    end
+  end
+
   def new_comment
     Comment::Member.new(
       name: "name #{Time.now.to_f}",

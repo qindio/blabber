@@ -47,6 +47,10 @@ module Blabber
         members.each(&block)
       end
 
+      def to_json(*args)
+        members.to_a.to_json
+      end
+
       private
 
       attr_reader :members, :operations
