@@ -24,9 +24,8 @@ describe Comment::Collection do
 
     it 'validates the member' do
       member = Minitest::Mock.new
-      member.expect :id, rand(999)
+      member.expect :hash, rand(999)
       member.expect :validate!, member
-      member.expect :id, rand(999)
 
       collection = Comment::Collection.new('test')
       collection.add(member)
@@ -87,11 +86,11 @@ describe Comment::Collection do
       collection.clear
 
       operations = [
-        [:add, comment1.id],
-        [:add, comment2.id],
-        [:remove, comment1.id],
-        [:remove, comment2.id],
-        [:add, comment2.id],
+        [:add, comment1],
+        [:add, comment2],
+        [:remove, comment1],
+        [:remove, comment2],
+        [:add, comment2],
         [:clear]
       ]
 
@@ -108,6 +107,7 @@ describe Comment::Collection do
     Comment::Member.new(
       name: "name #{Time.now.to_f}",
       text: "text #{Time.now.to_f}",
+      url: "www.example.com"
     )
   end
 end

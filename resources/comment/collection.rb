@@ -15,14 +15,14 @@ module Blabber
 
       def add(member)
         member.validate!
-        members.add(member.id)
-        operations.push([:add, member.id])
+        members.add(member)
+        operations.push([:add, member])
         self
       end
 
       def remove(member)
-        members.delete(member.id)
-        operations.push([:remove, member.id])
+        members.delete(member)
+        operations.push([:remove, member])
         self
       end
 
