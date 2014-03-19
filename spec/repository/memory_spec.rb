@@ -102,6 +102,23 @@ describe Repository::Memory do
     end
   end
 
+  describe '#flush' do
+    it 'removes all data from the repository' do
+      repository = Repository::Memory.new
+      member1 = { id: 1 }
+      member2 = { id: 2 }
+
+      repository.store(member1.fetch(:id), member1)
+      repository.store(member2.fetch(:id), member1)
+      repository.apply("collection-1", [["add", member1], ["add", member2]])
+
+      repository.flush
+      lambda { repository.fetch(member1.fetch(:id)) }.must_raise KeyError
+      lambda { repository.fetch(member2.fetch(:id)) }.must_raise KeyError
+      lambda { repository.fetch("collection-1") }.must_raise KeyError
+    end
+  end
+
   def fixture_member
     member_klass = Struct.new(:id, :name, :email)
     member_klass.new(

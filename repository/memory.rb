@@ -38,6 +38,10 @@ module Blabber
 
       alias_method :clear, :delete
 
+      def flush
+        memory.clear
+      end
+
       private
 
       attr_reader :memory
