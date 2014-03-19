@@ -52,6 +52,7 @@ module Blabber
 
       def fetch
         set_attributes(Comment.repository.fetch(id))
+        self
       end
 
       def sync
@@ -62,6 +63,7 @@ module Blabber
 
       def delete
         Comment.repository.delete(id)
+        self
       end
 
       private
