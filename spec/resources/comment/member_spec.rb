@@ -123,5 +123,19 @@ describe Comment::Member do
       repository.verify
     end
   end
+
+  describe '#delete' do
+    it 'tells the repository to delete the resource' do
+      attributes = { name: 'foo', text: 'bar' }
+      repository = MiniTest::Mock.new
+      Comment.repository = repository
+
+      comment = Comment::Member.new(attributes)
+      repository.expect :delete, repository, [comment.id]
+
+      comment.delete
+      repository.verify
+    end
+  end
 end # Comment::Member
 

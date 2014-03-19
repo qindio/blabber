@@ -53,6 +53,10 @@ module Blabber
         self
       end
 
+      def delete
+        Comment.repository.delete(id)
+      end
+
       private
 
       attr_writer :errors, :id, :name, :text, :created_at
