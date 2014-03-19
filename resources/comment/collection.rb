@@ -10,22 +10,23 @@ module Blabber
 
       attr_reader :id
 
-      def initialize(id, members=[])
+      def initialize(id, members=[], member_klass=Comment::Member)
         @id = id
         @members = Set.new(members)
+        @member_klass = member_klass
         @operations = []
       end
 
       def add(member)
         member.validate!
         members.add(member)
-        operations.push([:add, member])
+        operations.push([:add, member.attributes])
         self
       end
 
       def remove(member)
         members.delete(member)
-        operations.push([:remove, member])
+        operations.push([:remove, member.attributes])
         self
       end
 
@@ -43,6 +44,11 @@ module Blabber
         Comment.repository.apply(id, operations)
       end
 
+      def fetch
+        self.members = Comment.repository.fetch(id)
+          .map { |attributes| member_klass.new(attributes) }
+      end
+
       def each(&block)
         members.each(&block)
       end
@@ -53,7 +59,8 @@ module Blabber
 
       private
 
-      attr_reader :members, :operations
+      attr_reader :members, :operations, :member_klass
+      attr_writer :members
     end
   end # Comment
 end # Blabber

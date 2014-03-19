@@ -25,6 +25,7 @@ describe Comment::Collection do
     it 'validates the member' do
       member = Minitest::Mock.new
       member.expect :hash, rand(999)
+      member.expect :attributes, new_comment.attributes
       member.expect :validate!, member
 
       collection = Comment::Collection.new('test')
@@ -86,11 +87,11 @@ describe Comment::Collection do
       collection.clear
 
       operations = [
-        [:add, comment1],
-        [:add, comment2],
-        [:remove, comment1],
-        [:remove, comment2],
-        [:add, comment2],
+        [:add, comment1.attributes],
+        [:add, comment2.attributes],
+        [:remove, comment1.attributes],
+        [:remove, comment2.attributes],
+        [:add, comment2.attributes],
         [:clear]
       ]
 
@@ -100,6 +101,24 @@ describe Comment::Collection do
       repository.expect :apply, repository, [collection.id, operations]
       collection.sync
       repository.verify
+    end
+  end
+
+  describe '#fetch' do
+    it 'resets the collection with member data from the repository' do
+      fake_repository = Object.new
+      def fake_repository.fetch(*args)
+        [{ name: 'name 1', text: 'text 1' }]
+      end
+
+      Comment.repository = fake_repository
+
+      collection = Comment::Collection.new('test')
+      collection.must_be_empty
+
+      collection.fetch
+      collection.to_a.length.must_equal 1
+      collection.first.name.must_equal 'name 1'
     end
   end
 

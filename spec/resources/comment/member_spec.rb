@@ -120,7 +120,7 @@ describe Comment::Member do
     it 'retrieves attributes from the repository' do
       fake_repository = Object.new
       def fake_repository.fetch(*args)
-        { name: 'name 1', text: 'text 1' }.to_json
+        { name: 'name 1', text: 'text 1' }
       end
 
       Comment.repository = fake_repository
@@ -142,7 +142,7 @@ describe Comment::Member do
       Comment.repository = repository
 
       comment = Comment::Member.new(fixture)
-      repository.expect :store, repository, [comment.id, comment.to_json]
+      repository.expect :store, repository, [comment.id, comment.attributes]
 
       comment.sync
       repository.verify

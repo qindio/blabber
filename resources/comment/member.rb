@@ -51,12 +51,12 @@ module Blabber
       end
 
       def fetch
-        set_attributes(JSON.parse(Comment.repository.fetch(id)))
+        set_attributes(Comment.repository.fetch(id))
       end
 
       def sync
         validate!
-        Comment.repository.store(id, self.to_json)
+        Comment.repository.store(id, attributes)
         self
       end
 
