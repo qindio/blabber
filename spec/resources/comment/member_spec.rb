@@ -7,7 +7,7 @@ include Blabber
 
 describe Comment::Member do
   describe '#id' do
-    it "is generated a UUID if not passed at initialization" do
+    it 'is generated a UUID if not passed at initialization' do
       Comment::Member.new.id.wont_be_empty
 
       id = SecureRandom.uuid
@@ -22,6 +22,22 @@ describe Comment::Member do
       created_at = Time.now
       Comment::Member.new(created_at: created_at).created_at
         .must_equal created_at
+    end
+  end
+
+  describe '#page' do
+    it 'strips protocol information from URL' do
+      comment = Comment::Member.new(url: 'http://www.example.com')
+      comment.page.must_equal 'www.example.com'
+
+      comment = Comment::Member.new(url: 'http://www.example.com?foo=bar')
+      comment.page.must_equal 'www.example.com?foo=bar'
+
+      comment = Comment::Member.new(url: 'http://www.example.com?foo=bar#woo')
+      comment.page.must_equal 'www.example.com?foo=bar#woo'
+
+      comment = Comment::Member.new(url: 'www.example.com?foo=bar#woo')
+      comment.page.must_equal 'www.example.com?foo=bar#woo'
     end
   end
 
@@ -95,8 +111,8 @@ describe Comment::Member do
   describe '#to_json' do
     it 'returns a JSON representation of resource attributes' do
       comment = Comment::Member.new(name: 'foo', text: 'bar')
-      JSON.parse(comment.to_json).fetch("name").must_equal comment.name
-      JSON.parse(comment.to_json).fetch("text").must_equal comment.text
+      JSON.parse(comment.to_json).fetch('name').must_equal comment.name
+      JSON.parse(comment.to_json).fetch('text').must_equal comment.text
     end
   end
 
@@ -148,7 +164,7 @@ describe Comment::Member do
 
   def fixture
     {
-      url: "http://www.example.com",
+      url: 'http://www.example.com',
       name: 'foo',
       text: 'bar'
     }

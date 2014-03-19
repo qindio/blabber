@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'securerandom'
 require 'json'
+require 'uri'
 require_relative './module'
 
 module Blabber
@@ -17,6 +18,11 @@ module Blabber
 
         @id ||= next_id
         @created_at ||= Time.now
+      end
+
+      def page
+        uri = URI(url)
+        uri.to_s.split([uri.scheme, '://'].join).last
       end
 
       def validate
