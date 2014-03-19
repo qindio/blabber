@@ -8,9 +8,9 @@ module Blabber
 
   module Comment
     class Member
-      ATTRIBUTES = [:id, :name, :text, :created_at]
+      ATTRIBUTES = [:id, :name, :text, :created_at, :url]
 
-      attr_reader :errors, :id, :name, :text, :created_at
+      attr_reader :errors, :id, :url, :name, :text, :created_at
 
       def initialize(attributes={})
         set_attributes(attributes)
@@ -20,7 +20,8 @@ module Blabber
       end
 
       def validate
-        self.errors = { name: [], text: [] }
+        self.errors = { url: [], name: [], text: [] }
+        errors[:url].push(:must_be_present) if url.nil? || url.empty?
         errors[:name].push(:must_be_present) if name.nil? || name.empty?
         errors[:text].push(:must_be_present) if text.nil? || text.empty?
         self
@@ -59,7 +60,7 @@ module Blabber
 
       private
 
-      attr_writer :errors, :id, :name, :text, :created_at
+      attr_writer :errors, :id, :url, :name, :text, :created_at
 
       def next_id
         SecureRandom.uuid

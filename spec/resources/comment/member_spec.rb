@@ -26,6 +26,16 @@ describe Comment::Member do
   end
 
   describe '#validate' do
+    it 'requires a URL' do
+      comment = Comment::Member.new
+      comment.validate
+      comment.errors.fetch(:url).must_include(:must_be_present)
+
+      comment = Comment::Member.new(url: 'www.example.com')
+      comment.validate
+      comment.errors.fetch(:url).must_be_empty
+    end
+
     it 'requires a name' do
       comment = Comment::Member.new
       comment.validate
@@ -50,7 +60,7 @@ describe Comment::Member do
   describe '#validate!' do
     it 'raises InvalidResource if resource invalid' do
       lambda { Comment::Member.new.validate! }.must_raise InvalidResource
-      comment = Comment::Member.new(name: 'foo', text: 'bar').validate!
+      comment = Comment::Member.new(fixture).validate!
     end
   end
 
@@ -67,7 +77,7 @@ describe Comment::Member do
     end
 
     it 'returns true if there are no validation errors' do
-      comment = Comment::Member.new(name: 'foo', text: 'bar').validate
+      comment = Comment::Member.new(fixture).validate
       comment.valid?.must_equal true
     end
   end
@@ -112,11 +122,10 @@ describe Comment::Member do
     end
 
     it 'tells the repository to store the resource' do
-      attributes = { name: 'foo', text: 'bar' }
       repository = MiniTest::Mock.new
       Comment.repository = repository
 
-      comment = Comment::Member.new(attributes)
+      comment = Comment::Member.new(fixture)
       repository.expect :store, repository, [comment.id, comment.to_json]
 
       comment.sync
@@ -126,16 +135,23 @@ describe Comment::Member do
 
   describe '#delete' do
     it 'tells the repository to delete the resource' do
-      attributes = { name: 'foo', text: 'bar' }
       repository = MiniTest::Mock.new
       Comment.repository = repository
 
-      comment = Comment::Member.new(attributes)
+      comment = Comment::Member.new(fixture)
       repository.expect :delete, repository, [comment.id]
 
       comment.delete
       repository.verify
     end
+  end
+
+  def fixture
+    {
+      url: "http://www.example.com",
+      name: 'foo',
+      text: 'bar'
+    }
   end
 end # Comment::Member
 
