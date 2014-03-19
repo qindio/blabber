@@ -20,21 +20,19 @@ module Blabber
       end
 
       def apply(id, operations)
-        #memory.store(id, []) unless memory.has_key?(id)
-
         operations.each { |operation|
           command, args = operation[0], operation[1..-1]
           self.send(command, id, *args)
         }
       end
 
-      def add(id, *args)
-        memory.store(id, memory.fetch(id, []).push(*args))
+      def add(id, *members)
+        memory.store(id, memory.fetch(id, []).push(*members))
       end
 
-      def remove(id, *args)
+      def remove(id, *members)
         data = memory.fetch(id, [])
-        args.each { |item| data.delete(item) }
+        members.each { |member| data.delete(member) }
         memory.store(id, data)
       end
 

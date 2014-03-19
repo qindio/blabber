@@ -10,7 +10,7 @@ include Blabber
 describe Repository::Memory do
   describe '#store' do
     it 'persists member data using the passed id as key' do
-      member = fixture
+      member = fixture_member
       repository = Repository::Memory.new
 
       lambda { repository.fetch("test") }.must_raise KeyError
@@ -23,7 +23,7 @@ describe Repository::Memory do
 
   describe '#fetch' do
     it 'returns member data for a member id' do
-      member = fixture
+      member = fixture_member
       repository = Repository::Memory.new
       repository.store("test", member.to_json)
 
@@ -38,7 +38,7 @@ describe Repository::Memory do
 
   describe '#delete' do
     it 'deletes the member, removing the key' do
-      member = fixture
+      member = fixture_member
       repository = Repository::Memory.new
 
       repository.store("test", member.to_json)
@@ -68,23 +68,27 @@ describe Repository::Memory do
     it 'adds a member to a collection' do
       repository = Repository::Memory.new
       lambda { repository.fetch("collection-1") }.must_raise KeyError
-      repository.add("collection-1", 1)
+      repository.add("collection-1", fixture_member)
       repository.fetch("collection-1").wont_be_empty
     end
   end
 
   describe '#remove' do
     it 'removes a member from a collection' do
+      members = (1..5).map { |t| fixture_member }
+
       repository = Repository::Memory.new
-      repository.add("collection-1", 1)
+      repository.add("collection-1", members.at(1))
       repository.fetch("collection-1").wont_be_empty
 
-      repository.remove("collection-1", 1)
+      repository.remove("collection-1", members.at(1))
       repository.fetch("collection-1").must_be_empty
 
-      repository.add("collection-1", 1, 2, 3, 4, 1)
+      members_with_repetition = members[1..4].push(members.at(1))
+
+      repository.add("collection-1", *members_with_repetition)
       repository.fetch("collection-1").wont_be_empty
-      repository.remove("collection-1", 1, 2, 3, 4)
+      repository.remove("collection-1", *members_with_repetition)
       repository.fetch("collection-1").must_be_empty
     end
   end
@@ -99,12 +103,13 @@ describe Repository::Memory do
     end
   end
 
-  def fixture
-    { 
+  def fixture_member
+    member_klass = Struct.new(:id, :name, :email)
+    member_klass.new(
       id: SecureRandom.uuid,
       name: 'foo',
       email: 'foo@foo.com' 
-    }
+    )
   end
 end
 
