@@ -103,6 +103,16 @@ describe Comment::Collection do
     end
   end
 
+  describe '#each' do
+    it 'yields members in the collection' do
+      collection = Comment::Collection.new('test')
+      collection.add(new_comment)
+      collection.add(new_comment)
+
+      collection.to_a.length.must_equal 2
+    end
+  end
+
   def new_comment
     Comment::Member.new(
       name: "name #{Time.now.to_f}",

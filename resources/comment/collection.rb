@@ -1,9 +1,12 @@
 # encoding: utf-8
 require 'set'
+require 'json'
+require_relative './module'
 
 module Blabber
   module Comment
     class Collection
+      include Enumerable
 
       attr_reader :id
 
@@ -38,6 +41,10 @@ module Blabber
 
       def sync
         Comment.repository.apply(id, operations)
+      end
+
+      def each(&block)
+        members.each(&block)
       end
 
       private
