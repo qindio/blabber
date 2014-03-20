@@ -49,13 +49,6 @@ describe Repository::Memory do
   end
 
   describe '#apply' do
-    it 'creates a collection on the key if it does not exist' do
-      repository = Repository::Memory.new
-      lambda { repository.fetch("collection-1") }.must_raise KeyError
-      repository.apply("collection-1", [["add", "1"]])
-      repository.fetch("collection-1").wont_be_empty
-    end
-
     it 'executes a list of operations on a collection' do
       repository = Repository::Memory.new
       repository.apply("collection-1", [["add", "1"], ["add", "2"]])
@@ -68,6 +61,13 @@ describe Repository::Memory do
       repository = Repository::Memory.new
       lambda { repository.fetch("collection-1") }.must_raise KeyError
       repository.add("collection-1", fixture_member)
+      repository.fetch("collection-1").wont_be_empty
+    end
+
+    it 'creates a collection on the key if it does not exist' do
+      repository = Repository::Memory.new
+      lambda { repository.fetch("collection-1") }.must_raise KeyError
+      repository.add("collection-1", "1")
       repository.fetch("collection-1").wont_be_empty
     end
   end
