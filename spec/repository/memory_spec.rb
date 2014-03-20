@@ -121,11 +121,7 @@ describe Repository::Memory do
 
   def fixture_member
     member_klass = Struct.new(:id, :name, :email)
-    member_klass.new(
-      id: SecureRandom.uuid,
-      name: 'foo',
-      email: 'foo@foo.com' 
-    )
+    member_klass.new(SecureRandom.uuid, 'foo', 'foo@foo.com')
   end
 end
 
