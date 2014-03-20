@@ -34,6 +34,7 @@ module Blabber
         data = memory.fetch(id, [])
         members.each { |member| data.delete(member) }
         memory.store(id, data)
+        memory.delete(id) if data.empty?
       end
 
       alias_method :clear, :delete

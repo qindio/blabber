@@ -78,17 +78,22 @@ describe Repository::Memory do
 
       repository = Repository::Memory.new
       repository.add("collection-1", members.at(1))
-      repository.fetch("collection-1").wont_be_empty
+      repository.add("collection-1", members.at(2))
+      repository.fetch("collection-1").length.must_equal 2
 
-      repository.remove("collection-1", members.at(1))
-      repository.fetch("collection-1").must_be_empty
+      repository.remove("collection-1", members.at(2))
+      repository.fetch("collection-1").length.must_equal 1
+    end
 
-      members_with_repetition = members[1..4].push(members.at(1))
+    it 'deletes the key of the collection if empty' do
+      member = fixture_member
 
-      repository.add("collection-1", *members_with_repetition)
-      repository.fetch("collection-1").wont_be_empty
-      repository.remove("collection-1", *members_with_repetition)
-      repository.fetch("collection-1").must_be_empty
+      repository = Repository::Memory.new
+      repository.add("collection-test", member)
+      repository.fetch("collection-test").wont_be_nil
+
+      repository.remove("collection-test", member)
+      lambda { repository.fetch("collection-test") }.must_raise KeyError
     end
   end
 
