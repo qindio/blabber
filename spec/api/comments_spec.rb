@@ -96,7 +96,7 @@ describe Blabber::Api do
     end
   end
 
-  describe 'put /comments/url/:url/:comment_id' do
+  describe 'put /comments/approved/:comment_id' do
     it 'makes the comment visible for the url' do
       comment = fixture
       post "/comments", comment.to_json, @headers
