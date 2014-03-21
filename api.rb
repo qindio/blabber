@@ -23,7 +23,7 @@ module Blabber
     end
 
     helpers do
-      include Helpers
+      include Blabber::Helpers
     end
   end # Api
 end # Blabber
