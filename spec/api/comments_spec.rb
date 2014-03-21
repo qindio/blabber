@@ -14,6 +14,7 @@ describe Blabber::Api do
 
   before do
     @headers = { "CONTENT_TYPE" => "application/json" }
+    Blabber::Api.disable :sessions
     Blabber::Comment.repository.flush
   end
 
@@ -107,12 +108,22 @@ describe Blabber::Api do
       JSON.parse(last_response.body).must_be_empty
 
       put "/comments/approved/#{comment_id}",
-        comment.to_json, @headers
+        comment.to_json, @headers.merge(admin_session)
       last_response.status.must_equal 200
 
       get "/comments?url=#{comment.fetch(:url)}"
       JSON.parse(last_response.body).first.fetch("id")
         .must_equal comment_id
+    end
+
+    it 'returns 401 if not logged in as admin' do
+      comment = fixture
+      post "/comments", comment.to_json, @headers
+      comment_id = JSON.parse(last_response.body).fetch("id")
+
+      put "/comments/approved/#{comment_id}",
+        comment.to_json, @headers
+      last_response.status.must_equal 401
     end
   end
 
@@ -126,7 +137,7 @@ describe Blabber::Api do
       get "/comments/#{comment_id}"
       last_response.status.must_equal 200
 
-      delete "/comments/#{comment_id}"
+      delete "/comments/#{comment_id}", {}, admin_session
       last_response.status.must_equal 204
 
       get "/comments/#{comment_id}"
@@ -144,7 +155,7 @@ describe Blabber::Api do
         comment.fetch("id")
       }.must_include comment_id
 
-      delete "/comments/#{comment_id}"
+      delete "/comments/#{comment_id}", {}, admin_session
 
       get "/comments/pending"
       JSON.parse(last_response.body).map { |comment|
@@ -158,16 +169,29 @@ describe Blabber::Api do
       comment_id = JSON.parse(last_response.body).fetch("id")
 
       put "/comments/approved/#{comment_id}",
-        comment.to_json, @headers
+        comment.to_json, @headers.merge(admin_session)
       last_response.status.must_equal 200
 
       get "/comments?url=#{comment.fetch(:url)}"
       JSON.parse(last_response.body).first.fetch("id").must_equal comment_id
 
-      delete "/comments/#{comment_id}"
+      delete "/comments/#{comment_id}", {}, admin_session
 
       get "/comments?url=#{comment.fetch(:url)}"
       JSON.parse(last_response.body).must_be_empty
+    end
+
+    it 'returns 401 if not logged in as admin' do
+      comment = fixture
+      post "/comments", comment.to_json, @headers
+      comment_id = JSON.parse(last_response.body).fetch("id")
+
+      put "/comments/approved/#{comment_id}",
+        comment.to_json, @headers.merge(admin_session)
+      last_response.status.must_equal 200
+
+      delete "/comments/#{comment_id}"
+      last_response.status.must_equal 401
     end
   end
 
@@ -177,6 +201,10 @@ describe Blabber::Api do
       text: "Awesome post!",
       url: "http://example.com/post/1"
     }
+  end
+
+  def admin_session
+    { "rack.session" => { "user_id" => Blabber::Api::ADMIN_ID } }
   end
 end # Blabber::Api
 

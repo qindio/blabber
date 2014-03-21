@@ -43,6 +43,8 @@ module Blabber
     end
 
     put "/comments/approved/:comment_id" do
+      return [401] unless admin?
+
       begin
         comment = Comment::Member.new(id: params[:comment_id]).fetch
         pending_comments = Comment::Collection.new("comments:pending")
@@ -67,6 +69,8 @@ module Blabber
     end
 
     delete "/comments/:comment_id" do
+      return [401] unless admin?
+
       begin
         comment = Comment::Member.new(id: params[:comment_id]).fetch
         pending_comments = Comment::Collection.new("comments:pending")
@@ -82,5 +86,4 @@ module Blabber
     end
   end # Api
 end # Blabber
-
 
