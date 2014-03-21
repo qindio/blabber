@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'sinatra/base'
 require 'securerandom'
+require_relative './helpers'
 
 module Blabber
   class Api < Sinatra::Base

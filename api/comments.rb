@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'sinatra/base'
+require_relative './helpers'
 require_relative '../resources/comment/comment'
 
 module Blabber

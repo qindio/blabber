@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'sinatra/base'
+require_relative './api/helpers'
 require_relative './api/sessions'
 require_relative './api/comments'
 require_relative './repository/memory'
@@ -22,19 +23,7 @@ module Blabber
     end
 
     helpers do
-      def payload
-        request.body.rewind
-        JSON.parse(request.body.read.to_s)
-      end
-
-      def admin?
-        session["user_id"] == ADMIN_ID
-      end
-
-      def admin_match?(credentials)
-        credentials.fetch("user") == ADMIN_CREDENTIALS.fetch("user") &&
-        credentials.fetch("password") == ADMIN_CREDENTIALS.fetch("password")
-      end
+      include Helpers
     end
   end # Api
 end # Blabber
