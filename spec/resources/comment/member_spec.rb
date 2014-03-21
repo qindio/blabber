@@ -49,7 +49,7 @@ describe Comment::Member do
 
       comment = Comment::Member.new(url: 'www.example.com')
       comment.validate
-      comment.errors.fetch(:url).must_be_empty
+      comment.errors.has_key?(:url).must_equal false
     end
 
     it 'requires a name' do
@@ -59,7 +59,7 @@ describe Comment::Member do
 
       comment = Comment::Member.new(name: 'foo')
       comment.validate
-      comment.errors.fetch(:name).must_be_empty
+      comment.errors.has_key?(:name).must_equal false
     end
 
     it 'requires some text' do
@@ -69,7 +69,7 @@ describe Comment::Member do
 
       comment = Comment::Member.new(text: 'foo')
       comment.validate
-      comment.errors.fetch(:text).must_be_empty
+      comment.errors.has_key?(:text).must_equal false
     end
   end
 

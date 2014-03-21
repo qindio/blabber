@@ -15,9 +15,9 @@ module Blabber
 
       def initialize(attributes={})
         set_attributes(attributes)
-
         @id ||= next_id
         @created_at ||= Time.now
+        @errors = {}
       end
 
       def page
@@ -26,10 +26,9 @@ module Blabber
       end
 
       def validate
-        self.errors = { url: [], name: [], text: [] }
-        errors[:url].push(:must_be_present) if url.nil? || url.empty?
-        errors[:name].push(:must_be_present) if name.nil? || name.empty?
-        errors[:text].push(:must_be_present) if text.nil? || text.empty?
+        add_error(:url, :must_be_present) if url.nil? || url.empty?
+        add_error(:name, :must_be_present) if name.nil? || name.empty?
+        add_error(:text, :must_be_present) if text.nil? || text.empty?
         self
       end
 
@@ -43,7 +42,9 @@ module Blabber
       end
 
       def to_json(*args)
-        attributes.to_json(*args)
+        representation = attributes
+        representation.merge!(errors: errors) unless valid?
+        representation.to_json(*args)
       end
 
       def attributes
@@ -78,6 +79,10 @@ module Blabber
         attributes
           .select { |key, value| ATTRIBUTES.include?(key.to_sym) }
           .each { |key, value| self.send("#{key}=", value) }
+      end
+
+      def add_error(attribute, error)
+        errors[attribute] = (errors[attribute] || []).push(error)
       end
     end # Member
   end # Comment
