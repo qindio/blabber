@@ -2,6 +2,7 @@
 require 'set'
 require 'json'
 require_relative './module'
+require_relative '../exceptions'
 
 module Blabber
   module Comment

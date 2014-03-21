@@ -3,10 +3,9 @@ require 'securerandom'
 require 'json'
 require 'uri'
 require_relative './module'
+require_relative '../exceptions'
 
 module Blabber
-  class InvalidResource < StandardError; end
-
   module Comment
     class Member
       ATTRIBUTES = [:id, :url, :name, :text, :created_at]
