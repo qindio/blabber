@@ -114,9 +114,6 @@ describe Blabber::Api do
       JSON.parse(last_response.body).first.fetch("id")
         .must_equal comment_id
     end
-
-    it 'removes the comment from the pending collection' do
-    end
   end
 
   describe 'delete /comments/:comment_id' do
