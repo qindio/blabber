@@ -1,2 +1,3 @@
 require './api'
-run Blabber::Api.new
+run Blabber::Api
+
