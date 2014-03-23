@@ -2,6 +2,7 @@
 require 'securerandom'
 require 'json'
 require 'uri'
+require 'time'
 require_relative './module'
 require_relative '../exceptions'
 
@@ -15,8 +16,12 @@ module Blabber
       def initialize(attributes={})
         set_attributes(attributes)
         @id ||= next_id
-        @created_at ||= Time.now
+        @created_at ||= Time.now.utc
         @errors = {}
+      end
+
+      def created_at=(time_as_object_or_string)
+        @created_at = Time.parse(time_as_object_or_string.to_s).utc
       end
 
       def page
@@ -47,7 +52,11 @@ module Blabber
       end
 
       def attributes
-        Hash[ATTRIBUTES.map { |key| [key, self.send(key)] }]
+        @attributes = Hash[ATTRIBUTES.map { |key| [key, self.send(key)] }]
+        @attributes.store(
+          :created_at, @attributes.fetch(:created_at).utc.iso8601
+        )
+        @attributes
       end
 
       def fetch
@@ -68,7 +77,7 @@ module Blabber
 
       private
 
-      attr_writer :errors, :id, :url, :name, :text, :created_at
+      attr_writer :errors, :id, :url, :name, :text
 
       def next_id
         SecureRandom.uuid

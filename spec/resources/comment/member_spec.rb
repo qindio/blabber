@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'minitest/autorun'
 require 'securerandom'
+require 'json'
 require_relative '../../../resources/comment/member'
 
 include Blabber
@@ -19,9 +20,24 @@ describe Comment::Member do
     it 'is generated if not passed at initalization' do
       Comment::Member.new.created_at.must_be_instance_of Time
 
-      created_at = Time.now
-      Comment::Member.new(created_at: created_at).created_at
-        .must_equal created_at
+      created_at = Time.now.utc
+      Comment::Member.new(created_at: created_at).created_at.to_i
+        .must_equal created_at.to_i
+    end
+  end
+
+  describe '#created_at=' do
+    it 'parses a datetime passed as string' do
+      time = Time.now.utc
+      time_as_string = time.iso8601.to_s
+      comment = Comment::Member.new(created_at: time_as_string)
+      comment.created_at.to_i.must_equal time.to_i
+    end
+
+    it 'accepts a time object' do
+      time = Time.now.utc
+      comment = Comment::Member.new(created_at: time)
+      comment.created_at.to_i.must_equal time.to_i
     end
   end
 
