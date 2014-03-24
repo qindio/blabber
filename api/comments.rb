@@ -22,9 +22,7 @@ module Blabber
 
     get "/comments" do
       return [204] unless params[:url]
-
-      uri = URI(CGI.unescape(params[:url]))
-      entry = uri.to_s.split([uri.scheme, '://'].join).last
+      entry = Comment.entry_from(CGI.unescape(params[:url]))
 
       begin
         comments = Comment::Collection.new("comments:#{entry}").fetch

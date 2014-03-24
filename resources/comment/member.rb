@@ -25,8 +25,7 @@ module Blabber
       end
 
       def entry
-        uri = URI(url)
-        uri.to_s.split([uri.scheme, '://'].join).last
+        Comment.entry_from(url)
       end
 
       def validate
