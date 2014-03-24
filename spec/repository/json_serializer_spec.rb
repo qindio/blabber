@@ -36,8 +36,8 @@ describe Repository::JsonSerializer do
       @repository.fetch(member.fetch('id')).must_equal member.to_hash
     end
 
-    it 'raises KeyError if member cannot be found' do
-      lambda { @repository.fetch("nonexistent") }.must_raise KeyError
+    it 'raises Errno::ENOENT if member cannot be found' do
+      lambda { @repository.fetch("nonexistent") }.must_raise Errno::ENOENT
     end
   end
 
@@ -49,7 +49,7 @@ describe Repository::JsonSerializer do
       @repository.delete(member.fetch('id'))
 
       lambda { @repository.fetch(member.fetch('id')) }
-        .must_raise KeyError
+        .must_raise Errno::ENOENT
     end
   end
 
@@ -57,6 +57,8 @@ describe Repository::JsonSerializer do
     it 'executes a list of operations on a collection' do
       @repository.apply("collection-1", [["add", "1"], ["add", "2"]])
       @repository.fetch("collection-1").wont_be_empty
+      @repository.apply("collection-1", [["remove", "1"], ["remove", "2"]])
+      lambda { @repository.fetch("collection-1") }.must_raise Errno::ENOENT
     end
   end
 
@@ -72,7 +74,7 @@ describe Repository::JsonSerializer do
     end
 
     it 'adds a member to a collection' do
-      lambda { @repository.fetch("collection-test") }.must_raise KeyError 
+      lambda { @repository.fetch("collection-test") }.must_raise Errno::ENOENT 
       @repository.add("collection-test", fixture_member)
       @repository.fetch("collection-test").wont_be_empty
     end
@@ -125,7 +127,7 @@ describe Repository::JsonSerializer do
       @repository.apply("collection-test", [["add", "1"], ["add", "2"]])
       @repository.fetch("collection-test").wont_be_empty
       @repository.clear("collection-test")
-      lambda { @repository.fetch("collection-1") }.must_raise KeyError
+      lambda { @repository.fetch("collection-1") }.must_raise Errno::ENOENT
     end
   end
 

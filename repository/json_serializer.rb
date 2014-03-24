@@ -17,8 +17,6 @@ module Blabber
 
       def fetch(id)
         JSON.parse(File.read(File.join(basedir, id)))
-      rescue Errno::ENOENT
-        raise KeyError
       end
 
       def delete(id)
@@ -65,7 +63,7 @@ module Blabber
 
         block.call(data)
 
-        File.delete(path) and return self if data.empty?
+        File.delete(path) and return self if data.empty? && File.exists?(path)
         File.open(path, 'w') { |file| file << data.to_json }
         self
       end
