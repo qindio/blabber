@@ -9,7 +9,6 @@ require_relative '../exceptions'
 module Blabber
   module Comment
     class Member
-      #ATTRIBUTES = [:id, :url, :name, :text, :created_at]
       ATTRIBUTES = %w(id url name text created_at)
 
       attr_reader :errors, :id, :url, :name, :text, :created_at
