@@ -9,7 +9,8 @@ require_relative '../exceptions'
 module Blabber
   module Comment
     class Member
-      ATTRIBUTES = [:id, :url, :name, :text, :created_at]
+      #ATTRIBUTES = [:id, :url, :name, :text, :created_at]
+      ATTRIBUTES = %w(id url name text created_at)
 
       attr_reader :errors, :id, :url, :name, :text, :created_at
 
@@ -53,7 +54,7 @@ module Blabber
       def attributes
         @attributes = Hash[ATTRIBUTES.map { |key| [key, self.send(key)] }]
         @attributes.store(
-          :created_at, @attributes.fetch(:created_at).utc.iso8601
+          "created_at", @attributes.fetch("created_at").utc.iso8601
         )
         @attributes
       end
@@ -86,7 +87,7 @@ module Blabber
 
       def set_attributes(attributes={})
         attributes
-          .select { |key, value| ATTRIBUTES.include?(key.to_sym) }
+          .select { |key, value| ATTRIBUTES.include?(key.to_s) }
           .each { |key, value| self.send("#{key}=", value) }
       end
 

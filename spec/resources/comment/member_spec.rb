@@ -44,16 +44,7 @@ describe Comment::Member do
   describe '#entry' do
     it 'strips protocol information from URL' do
       comment = Comment::Member.new(url: 'http://www.example.com')
-      comment.entry.must_equal 'www.example.com'
-
-      comment = Comment::Member.new(url: 'http://www.example.com?foo=bar')
-      comment.entry.must_equal 'www.example.com?foo=bar'
-
-      comment = Comment::Member.new(url: 'http://www.example.com?foo=bar#woo')
-      comment.entry.must_equal 'www.example.com?foo=bar#woo'
-
-      comment = Comment::Member.new(url: 'www.example.com?foo=bar#woo')
-      comment.entry.must_equal 'www.example.com?foo=bar#woo'
+      comment.entry.must_equal Comment.entry_from('www.example.com')
     end
   end
 
@@ -119,8 +110,8 @@ describe Comment::Member do
       comment = Comment::Member.new(name: 'foo', text: 'bar')
       comment.attributes.keys.sort.must_equal Comment::Member::ATTRIBUTES.sort
 
-      comment.attributes.fetch(:name).must_equal 'foo'
-      comment.attributes.fetch(:text).must_equal 'bar'
+      comment.attributes.fetch('name').must_equal 'foo'
+      comment.attributes.fetch('text').must_equal 'bar'
     end
   end
 
