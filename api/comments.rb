@@ -30,7 +30,7 @@ module Blabber
         comments = Comment::Collection.new("comments:#{entry}").fetch
           .sort_by { |comment| comment.created_at }
         [200, comments.to_json]
-      rescue KeyError
+      rescue ResourceNotFound
         [200, [].to_json]
       end
     end
@@ -40,7 +40,7 @@ module Blabber
         comments = Comment::Collection.new("comments:pending").fetch
           .sort_by { |comment| comment.created_at }
         [200, comments.to_json]
-      rescue KeyError
+      rescue ResourceNotFound
         [200, [].to_json]
       end
     end
@@ -57,7 +57,7 @@ module Blabber
         entry_comments.add(comment).sync
 
         [200, comment.to_json]
-      rescue KeyError
+      rescue ResourceNotFound
         [404]
       end
     end
@@ -66,7 +66,7 @@ module Blabber
       begin
         comment = Comment::Member.new(id: params[:comment_id]).fetch
         [200, comment.to_json]
-      rescue KeyError
+      rescue ResourceNotFound
         [404]
       end
     end
@@ -83,7 +83,7 @@ module Blabber
         entry_comments.remove(comment).sync
         comment.delete
         [204]
-      rescue KeyError
+      rescue ResourceNotFound
         [404]
       end
     end

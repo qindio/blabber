@@ -62,6 +62,8 @@ module Blabber
       def fetch
         set_attributes(Comment.repository.fetch(id))
         self
+      rescue KeyError, Errno::ENOENT
+        raise ResourceNotFound
       end
 
       def sync

@@ -50,6 +50,8 @@ module Blabber
         self.members = Comment.repository.fetch(id)
           .map { |attributes| member_klass.new(attributes) }
         self
+      rescue KeyError, Errno::ENOENT
+        raise ResourceNotFound
       end
 
       def each(&block)
