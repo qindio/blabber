@@ -28,6 +28,7 @@ module Blabber
 
       begin
         comments = Comment::Collection.new("comments:#{page}").fetch
+          .sort_by { |comment| comment.created_at }
         [200, comments.to_json]
       rescue KeyError
         [200, [].to_json]
@@ -37,6 +38,7 @@ module Blabber
     get "/comments/pending" do
       begin
         comments = Comment::Collection.new("comments:pending").fetch
+          .sort_by { |comment| comment.created_at }
         [200, comments.to_json]
       rescue KeyError
         [200, [].to_json]

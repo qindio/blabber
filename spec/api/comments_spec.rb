@@ -53,6 +53,24 @@ describe Blabber::Api do
       last_response.status.must_equal 400
       JSON.parse(last_response.body).fetch("errors").wont_be_empty
     end
+
+    it 'sorts comments by created_at on ascending order' do
+      comment1, comment2 = fixture, fixture(created_at: Time.now + 3600)
+
+      post "/comments", comment1.to_json, @headers
+      comment1_id = JSON.parse(last_response.body).fetch("id")
+
+      post "/comments", comment2.to_json, @headers
+      comment2_id = JSON.parse(last_response.body).fetch("id")
+
+      url = CGI.escape(comment1.fetch(:url))
+
+      get "/comments/pending"
+      response = JSON.parse(last_response.body)
+
+      response.at(0).fetch("created_at").must_be :<, 
+        response.at(1).fetch("created_at")
+    end
   end
 
   describe 'get /comments/:comment_id' do
@@ -87,6 +105,29 @@ describe Blabber::Api do
 
       get "/comments?url=#{url}"
       JSON.parse(last_response.body).must_be_empty
+    end
+
+    it 'sorts comments by created_at on ascending order' do
+      comment1, comment2 = fixture, fixture(created_at: Time.now + 3600)
+
+      post "/comments", comment1.to_json, @headers
+      comment1_id = JSON.parse(last_response.body).fetch("id")
+
+      post "/comments", comment2.to_json, @headers
+      comment2_id = JSON.parse(last_response.body).fetch("id")
+
+      url = CGI.escape(comment1.fetch(:url))
+
+      put "/comments/approved/#{comment1_id}", comment1.to_json,
+        @headers.merge(admin_session)
+      put "/comments/approved/#{comment2_id}", comment2.to_json,
+        @headers.merge(admin_session)
+
+      get "/comments?url=#{url}"
+      response = JSON.parse(last_response.body)
+
+      response.at(0).fetch("created_at").must_be :<, 
+        response.at(1).fetch("created_at")
     end
   end
 
@@ -195,12 +236,12 @@ describe Blabber::Api do
     end
   end
 
-  def fixture
+  def fixture(attributes={})
     {
       name: "John Doe",
       text: "Awesome post!",
       url: "http://example.com/post/1"
-    }
+    }.merge(attributes)
   end
 
   def admin_session
