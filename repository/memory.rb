@@ -1,4 +1,5 @@
 # encoding: utf-8
+require 'set'
 
 module Blabber
   module Repository
@@ -27,11 +28,11 @@ module Blabber
       end
 
       def add(id, *members)
-        memory.store(id, memory.fetch(id, []).push(*members))
+        memory.store(id, memory.fetch(id, Set.new).add(*members))
       end
 
       def remove(id, *members)
-        data = memory.fetch(id, [])
+        data = memory.fetch(id, Set.new)
         members.each { |member| data.delete(member) }
         memory.store(id, data)
         memory.delete(id) if data.empty?
