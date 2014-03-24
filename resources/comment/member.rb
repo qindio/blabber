@@ -24,7 +24,7 @@ module Blabber
         @created_at = Time.parse(time_as_object_or_string.to_s).utc
       end
 
-      def page
+      def entry
         uri = URI(url)
         uri.to_s.split([uri.scheme, '://'].join).last
       end

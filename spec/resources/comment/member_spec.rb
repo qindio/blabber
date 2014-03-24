@@ -41,19 +41,19 @@ describe Comment::Member do
     end
   end
 
-  describe '#page' do
+  describe '#entry' do
     it 'strips protocol information from URL' do
       comment = Comment::Member.new(url: 'http://www.example.com')
-      comment.page.must_equal 'www.example.com'
+      comment.entry.must_equal 'www.example.com'
 
       comment = Comment::Member.new(url: 'http://www.example.com?foo=bar')
-      comment.page.must_equal 'www.example.com?foo=bar'
+      comment.entry.must_equal 'www.example.com?foo=bar'
 
       comment = Comment::Member.new(url: 'http://www.example.com?foo=bar#woo')
-      comment.page.must_equal 'www.example.com?foo=bar#woo'
+      comment.entry.must_equal 'www.example.com?foo=bar#woo'
 
       comment = Comment::Member.new(url: 'www.example.com?foo=bar#woo')
-      comment.page.must_equal 'www.example.com?foo=bar#woo'
+      comment.entry.must_equal 'www.example.com?foo=bar#woo'
     end
   end
 

@@ -24,10 +24,10 @@ module Blabber
       return [204] unless params[:url]
 
       uri = URI(CGI.unescape(params[:url]))
-      page = uri.to_s.split([uri.scheme, '://'].join).last
+      entry = uri.to_s.split([uri.scheme, '://'].join).last
 
       begin
-        comments = Comment::Collection.new("comments:#{page}").fetch
+        comments = Comment::Collection.new("comments:#{entry}").fetch
           .sort_by { |comment| comment.created_at }
         [200, comments.to_json]
       rescue KeyError
@@ -51,10 +51,10 @@ module Blabber
       begin
         comment = Comment::Member.new(id: params[:comment_id]).fetch
         pending_comments = Comment::Collection.new("comments:pending")
-        page_comments = Comment::Collection.new("comments:#{comment.page}")
+        entry_comments = Comment::Collection.new("comments:#{comment.entry}")
 
         pending_comments.remove(comment).sync
-        page_comments.add(comment).sync
+        entry_comments.add(comment).sync
 
         [200, comment.to_json]
       rescue KeyError
@@ -77,10 +77,10 @@ module Blabber
       begin
         comment = Comment::Member.new(id: params[:comment_id]).fetch
         pending_comments = Comment::Collection.new("comments:pending")
-        page_comments = Comment::Collection.new("comments:#{comment.page}")
+        entry_comments = Comment::Collection.new("comments:#{comment.entry}")
       
         pending_comments.remove(comment).sync
-        page_comments.remove(comment).sync
+        entry_comments.remove(comment).sync
         comment.delete
         [204]
       rescue KeyError
