@@ -26,26 +26,28 @@ module Blabber
       end
 
       def apply(id, operations)
-        operations.each { |operation|
-          command, args = operation[0], operation[1..-1]
-          self.send(command, id, *args)
+        overwrite_data_in(File.join(basedir, id)) { |data|
+          operations.each { |operation|
+            command, args = operation[0], operation[1..-1]
+            self.send(command, false, *args).call(data)
+          }
         }
       end
 
       def add(id, *members)
-        path = File.join(basedir, id)
-        data = JSON.parse(json_from(path) || [].to_json).push(*members)
-        File.open(path, 'w') { |file| file << data.to_json }
+        transformation = lambda { |data| data.push(*members) }
+        return transformation unless id
+
+        overwrite_data_in(File.join(basedir, id), &transformation) 
       end
 
       def remove(id, *members)
-        path = File.join(basedir, id)
-        data = JSON.parse(json_from(path) || [].to_json)
+        transformation = lambda { |data| 
+          members.each { |member| data.delete(member) }
+        }
+        return transformation unless id
 
-        members.each { |member| data.delete(member) }
-        (File.delete(path) && return) if data.empty?
-
-        File.open(path, 'w') { |file| file << data.to_json }
+        overwrite_data_in(File.join(basedir, id), &transformation)
       end
 
       alias_method :clear, :delete
@@ -57,6 +59,16 @@ module Blabber
       private 
 
       attr_reader :basedir
+
+      def overwrite_data_in(path, &block)
+        data = JSON.parse(json_from(path) || [].to_json)
+
+        block.call(data)
+
+        File.delete(path) and return self if data.empty?
+        File.open(path, 'w') { |file| file << data.to_json }
+        self
+      end
 
       def json_from(path)
         File.exists?(path) and File.read(path)

@@ -61,6 +61,16 @@ describe Repository::JsonSerializer do
   end
 
   describe '#add' do
+    it 'returns a block for the applicable transformation if no id passed' do
+      block = @repository.add(nil, fixture_member)
+      block.class.must_equal Proc
+
+      collection = []
+      collection.must_be_empty
+      block.call(collection)
+      collection.wont_be_empty
+    end
+
     it 'adds a member to a collection' do
       lambda { @repository.fetch("collection-test") }.must_raise KeyError 
       @repository.add("collection-test", fixture_member)
@@ -75,6 +85,18 @@ describe Repository::JsonSerializer do
   end
 
   describe '#remove' do
+    it 'returns a block for the applicable transformation if no id passed' do
+      member = fixture_member
+      collection = [member]
+
+      block = @repository.remove(nil, member)
+      block.class.must_equal Proc
+
+      collection.wont_be_empty
+      block.call(collection)
+      collection.must_be_empty
+    end
+
     it 'removes a member from a collection' do
       member1 = fixture_member
       member2 = fixture_member
