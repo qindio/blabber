@@ -23,14 +23,15 @@ describe Comment::Collection do
     end
 
     it 'validates the member' do
-      member = Minitest::Mock.new
-      member.expect :hash, rand(999)
-      member.expect :attributes, new_comment.attributes
-      member.expect :validate!, member
+      member_fake = Class.new {
+        attr_reader :validate_called
+        def validate!; @validate_called = true; end
+        def attributes; {}; end
+      }.new
 
       collection = Comment::Collection.new('test')
-      collection.add(member)
-      member.verify
+      collection.add(member_fake)
+      member_fake.validate_called.must_equal true
     end
   end
 

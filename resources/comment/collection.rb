@@ -20,13 +20,13 @@ module Blabber
 
       def add(member)
         member.validate!
-        members.add(member)
+        members.add(member.attributes)
         operations.push([:add, member.attributes])
         self
       end
 
       def remove(member)
-        members.delete(member)
+        members.delete(member.attributes)
         operations.push([:remove, member.attributes])
         self
       end
