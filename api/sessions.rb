@@ -2,12 +2,13 @@
 require 'sinatra/base'
 require 'securerandom'
 require_relative './helpers'
+require_relative '../services/authenticator'
 
 module Blabber
   class Api < Sinatra::Base
     post "/sessions" do
       begin
-        if admin_match?(payload)
+        if Services::Authenticator.new.authenticate(payload)
           session["user_id"] = ADMIN_ID
           return [201, { id: SecureRandom.uuid }.to_json]
         end

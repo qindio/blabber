@@ -18,7 +18,6 @@ module Blabber
 
     configure do
       Comment.repository = Repository::Memory.new
-      ADMIN_CREDENTIALS = JSON.parse(File.read("./admin.json"))
       ADMIN_ID = SecureRandom.uuid
     end
 

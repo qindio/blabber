@@ -31,15 +31,5 @@ describe Blabber::Helpers do
       testbed.admin?.must_equal false
     end
   end
-
-  describe '#admin_match?' do
-    it "returns true if passed credentials match admin's" do
-      testbed = @klass.new
-      testbed.admin_match?(Blabber::Api::ADMIN_CREDENTIALS).must_equal true
-
-      testbed.admin_match?(Blabber::Api::ADMIN_CREDENTIALS).must_equal true
-      testbed.admin_match?({}).must_equal false
-    end
-  end
 end
 

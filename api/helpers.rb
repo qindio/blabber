@@ -10,13 +10,6 @@ module Blabber
     def admin?
       session["user_id"] == Blabber::Api::ADMIN_ID
     end
-
-    def admin_match?(credentials)
-      credentials.fetch("user") == Blabber::Api::ADMIN_CREDENTIALS.fetch("user") &&
-      credentials.fetch("password") == Blabber::Api::ADMIN_CREDENTIALS.fetch("password")
-    rescue KeyError
-      false
-    end
   end # Helpers
 end # Blabber
 
