@@ -1,8 +1,8 @@
 # Blabber
 
-[![Build Status](https://secure.travis-ci.org/qindio/blabber.png?branch=master)][travis]
-[![Dependency Status](https://gemnasium.com/qindio/blabber.png)][gemnasium]
-[![Code Climate](https://codeclimate.com/github/qindio/blabber.png)][codeclimate]
+[travis]: https://travis-ci.org/qindio/blabber
+[gemnasium]: https://gemnasium.com/qindio/blabber
+[codeclimate]: https://codeclimate.com/github/qindio/blabber
 
 Blabber is a backend service and front-end plugin to provide comments tied to a
 URL. Development status is incipient. Check the blog posts for more
