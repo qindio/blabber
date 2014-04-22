@@ -8,6 +8,6 @@ group :development, :test do
   gem 'minitest', require: 'minitest/autorun'
   gem 'rack-test', require: 'rack/test'
   gem 'foreman'
-  gem 'linemanager', '0.1.1'
+  gem 'linemanager', '0.1.2'
 end
 
