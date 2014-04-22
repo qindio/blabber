@@ -5,15 +5,20 @@ module Blabber
   module Repository
     module Redis
       class SortedSet
-        def initialize(connection, score_block)
+        def initialize(connection, scorer,
+          serialize=default_serializer,
+          deserialize=default_deserializer
+        )
           @connection = connection
-          @score_block = score_block
+          @serialize = serialize
+          @deserialize = deserialize
+          @serialize_and_score = scorer_and_serializer(scorer)
         end
 
         def fetch(id, type=nil)
           members = connection.zrange(id, 0, -1)
           raise KeyError if members.empty?
-          members.map { |member| JSON.parse(member) }
+          members.map(&deserialize)
         end
 
         def apply(id, operations)
@@ -26,15 +31,11 @@ module Blabber
         end
 
         def add(id, *members)
-          members = members.map { |member| 
-            [score_block.call(member), member.to_hash.to_json ]
-          }
-          connection.zadd(id, members)
+          connection.zadd(id, members.map(&serialize_and_score))
         end
 
         def remove(id, *members)
-          members = members.map { |member| member.to_hash.to_json }
-          connection.zrem(id, members)
+          connection.zrem(id, members.map(&serialize))
         end
 
         def clear(id)
@@ -45,10 +46,21 @@ module Blabber
           connection.flushdb
         end
 
+        def default_serializer
+          lambda { |member| member.to_hash.to_json }
+        end
+
+        def default_deserializer
+          lambda { |member| JSON.parse(member) }
+        end
+
+        def scorer_and_serializer(scorer)
+          lambda { |member| [scorer.call(member), serialize.call(member) ] }
+        end
+
         private
 
-        attr_reader :connection
-        attr_reader :score_block
+        attr_reader :connection, :serialize, :deserialize, :serialize_and_score
       end # SortedSet
     end # Redis
   end # Repository
