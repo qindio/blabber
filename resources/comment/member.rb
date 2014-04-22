@@ -13,6 +13,14 @@ module Blabber
 
       attr_reader :errors, :id, :url, :name, :text, :created_at
 
+      def self.repository
+        @repository || Comment.repository
+      end
+
+      def self.repository=(repository)
+        @repository = repository
+      end
+
       def initialize(attributes={})
         set_attributes(attributes)
         @id ||= next_id
@@ -59,7 +67,7 @@ module Blabber
       end
 
       def fetch
-        set_attributes(Comment.repository.fetch(id))
+        set_attributes(Member.repository.fetch(id))
         self
       rescue KeyError, Errno::ENOENT
         raise ResourceNotFound
@@ -67,12 +75,12 @@ module Blabber
 
       def sync
         validate!
-        Comment.repository.store(id, attributes)
+        Member.repository.store(id, attributes)
         self
       end
 
       def delete
-        Comment.repository.delete(id)
+        Member.repository.delete(id)
         self
       end
 

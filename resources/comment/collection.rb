@@ -11,6 +11,14 @@ module Blabber
 
       attr_reader :id
 
+      def self.repository
+        @repository || Comment.repository
+      end
+
+      def self.repository=(repository)
+        @repository = repository
+      end
+
       def initialize(id, members=[], member_klass=Comment::Member)
         @id = id
         @members = Set.new(members)
@@ -42,12 +50,12 @@ module Blabber
       end
 
       def sync
-        Comment.repository.apply(id, operations)
+        Collection.repository.apply(id, operations)
         self
       end
 
       def fetch
-        self.members = Comment.repository.fetch(id)
+        self.members = Collection.repository.fetch(id)
           .map { |attributes| member_klass.new(attributes) }
         self
       rescue KeyError, Errno::ENOENT
