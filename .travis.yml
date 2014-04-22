@@ -7,4 +7,6 @@ rvm:
   - rbx
 # uncomment this line if your project needs to run something other
 # than `rake`:
-script: bundle exec rake test
+script: bundle exec rake travisci
+services:
+  - redis-server
