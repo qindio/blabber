@@ -1,4 +1,5 @@
 *.swp
 admin.json
 Gemfile.lock
+log
 
