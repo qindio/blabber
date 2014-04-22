@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'set'
 require 'json'
-require_relative './module'
+require_relative '../comment'
 require_relative '../exceptions'
 
 module Blabber
@@ -10,14 +10,6 @@ module Blabber
       include Enumerable
 
       attr_reader :id
-
-      def self.repository
-        @repository || Comment.repository
-      end
-
-      def self.repository=(repository)
-        @repository = repository
-      end
 
       def initialize(id, members=[], member_klass=Comment::Member)
         @id = id
@@ -50,12 +42,12 @@ module Blabber
       end
 
       def sync
-        Collection.repository.apply(id, operations)
+        repository.apply(id, operations)
         self
       end
 
       def fetch
-        self.members = Collection.repository.fetch(id)
+        self.members = repository.fetch(id)
           .map { |attributes| member_klass.new(attributes) }
         self
       rescue KeyError, Errno::ENOENT
@@ -74,6 +66,10 @@ module Blabber
 
       attr_reader :members, :operations, :member_klass
       attr_writer :members
+
+      def repository
+        Comment.repository(:collection)
+      end
     end
   end # Comment
 end # Blabber

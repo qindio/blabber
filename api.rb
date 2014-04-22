@@ -4,7 +4,7 @@ require_relative './api/helpers'
 require_relative './api/sessions'
 require_relative './api/comments'
 require_relative './repository/memory'
-require_relative './resources/comment/comment'
+require_relative './resources/comment'
 
 module Blabber
   class Api < Sinatra::Base

@@ -3,7 +3,7 @@ require 'securerandom'
 require 'json'
 require 'uri'
 require 'time'
-require_relative './module'
+require_relative '../comment'
 require_relative '../exceptions'
 
 module Blabber
@@ -12,14 +12,6 @@ module Blabber
       ATTRIBUTES = %w(id url name text created_at)
 
       attr_reader :errors, :id, :url, :name, :text, :created_at
-
-      def self.repository
-        @repository || Comment.repository
-      end
-
-      def self.repository=(repository)
-        @repository = repository
-      end
 
       def initialize(attributes={})
         set_attributes(attributes)
@@ -67,7 +59,7 @@ module Blabber
       end
 
       def fetch
-        set_attributes(Member.repository.fetch(id))
+        set_attributes(repository.fetch(id))
         self
       rescue KeyError, Errno::ENOENT
         raise ResourceNotFound
@@ -75,18 +67,22 @@ module Blabber
 
       def sync
         validate!
-        Member.repository.store(id, attributes)
+        repository.store(id, attributes)
         self
       end
 
       def delete
-        Member.repository.delete(id)
+        repository.delete(id)
         self
       end
 
       private
 
       attr_writer :errors, :id, :url, :name, :text
+
+      def repository
+        Comment.repository(:member)
+      end
 
       def next_id
         SecureRandom.uuid
