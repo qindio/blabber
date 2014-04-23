@@ -5,7 +5,7 @@ app_dir = File.expand_path(File.dirname(__FILE__))
 
 task :envtest do
   @manager = LineManager::Runner.new(app_dir, 'test', debug: true)
-  @manager.wait_for('Server started, Redis')
+  @manager.wait_for('] started')
 
   Rake::Task['test'].invoke
   @manager.teardown

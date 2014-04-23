@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'redis'
+gem 'elasticsearch'
 gem 'sinatra',  require: 'sinatra/base'
 
 group :development, :test do
